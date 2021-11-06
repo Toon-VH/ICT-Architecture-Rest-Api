@@ -2,12 +2,15 @@ const sql = require("mssql");
 const dbConfig = require('../Database/dbConnection');
 const {v4: uuidv4} = require('uuid');
 const checksum = require('checksum');
-const hashService = require("../Services/HashService");
+const UserService = require('../Services/UserService')
+
 
 const getAllFiles = (req, res) => {
+    console.log("Getting all files..")
     sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query("SELECT * FROM Files;");
     }).then(result => {
+        console.log("All files retrieved successfully!")
         res.send(result.recordset);
     }).catch(err => {
         res.status(500).send("Something Went Wrong !!!");
@@ -16,8 +19,8 @@ const getAllFiles = (req, res) => {
 };
 
 const downloadFile = (req, res) => {
-    console.log("Checking Authentication")
-    if (!IsAuthenticated(req.query.Username, req.query.Password))
+    console.log("Checking authentication..")
+    if (!UserService.IsAuthenticated(req.query.Username, req.query.Password))
         console.log("Authentication successful!")
     console.log(`Downloading file..`);
     sql.connect(dbConfig.dbConnection).then(() => {
@@ -31,24 +34,8 @@ const downloadFile = (req, res) => {
 };
 
 const uploadFile = async (req, res) => {
-    console.log("Checking Authentication");
-    if (req.query.Password == null || req.query.Username == null) {
-        console.log("Authentication failed no Username/Password given!!");
-        res.status(401).send("Authentication failed no Username/Password given!!");
-        return
 
-    }else if (!await IsRegisteredUsername(req.query.Username)) {
-        console.log("Authentication failed Username not found!!");
-        res.status(401).send("Authentication failed Username not found!!");
-        return
 
-    } else if (!await IsAuthenticated(req.query.Username, req.query.Password)) {
-        console.log("Authentication failed");
-        res.status(401).send("Authentication failed wrong Username/Password !!");
-        return
-    }
-
-    console.log("Authentication successful!")
     const file = req.files[''].data;
     const cs = checksum(file.toString());
     console.log(`Making Checksum: ${cs}`);
@@ -61,35 +48,26 @@ const uploadFile = async (req, res) => {
                 INSERT INTO Files (UUID, Checksum)
                 VALUES ('${uuid}', '${cs}');
                 `);
-    }).then(result => {
-        res.send(result);
+    }).then(() => {
+        console.log("file uploaded!")
+        res.send().message("file uploaded!");
     }).catch(err => {
         res.status(500).send("Something Went Wrong !!!");
         console.log(err)
     })
-    console.log(`File uploaded.`);
 };
 
-function IsRegisteredUsername(username){
-    return sql.connect(dbConfig.dbConnection).then(() => {
-        return sql.query(`SELECT UserName FROM Users WHERE UserName = '${username.toString()}';`);
-    }).then(result => {
-        return (result.recordset[0] != null)
+const deleteFile = (req, res) => {
+    console.log("Deleting file..")
+    sql.connect(dbConfig.dbConnection).then(() => {
+        return sql.query(`DELETE FROM Files WHERE Id = ${req.params.id}`);
+    }).then(() => {
+        console.log("File deleted")
+        res.send("File deleted!");
     }).catch(err => {
-        console.log(err);
+        res.status(500).send("Something Went Wrong !!!");
+        console.log(err)
     })
-}
+};
 
-function IsAuthenticated(username, password) {
-    return sql.connect(dbConfig.dbConnection).then(() => {
-        return sql.query(`SELECT HashPassword FROM Users WHERE UserName = '${username.toString()}';`);
-    }).then(result => {
-        let hash = hashService.CreateHash(password)
-        return (result.recordset[0].HashPassword === hash)
-    }).catch(err => {
-        console.log(err);
-    })
-}
-
-
-module.exports = {getAllFiles,downloadFile,uploadFile};
+module.exports = {getAllFiles,downloadFile,uploadFile,deleteFile};

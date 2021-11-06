@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "checksum": "^1.0.0",
+    "console-stamp": "^3.0.3",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "tedious": "^14.0.0",
