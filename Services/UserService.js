@@ -1,5 +1,5 @@
 const sql = require("mssql");
-const dbConfig = require("../Database/dbConnection");
+const dbConfig = require("../Database/DataBaseConnection");
 const hashService = require("../Services/HashService");
 
 function IsRegisteredUsername(username){
@@ -23,25 +23,27 @@ function IsAuthenticated(username, password) {
     })
 }
 
-async function AuthenticationMiddleWare(req, res, next){
-    console.log("Checking authentication..");
-    if (req.query.Password == null || req.query.Username == null) {
-        console.log("Authentication failed no Username/Password given!!");
-        res.status(401).send("Authentication failed no Username/Password given!!");
-        return;
+async function AuthMiddleWare(req, res, next){
+    if (!req.url.includes("/users/add")) {
+        console.log("Checking authentication..");
+        if (req.query.Password == null || req.query.Username == null) {
+            console.log("Authentication failed no Username/Password given!!");
+            res.status(401).send("Authentication failed no Username/Password given!!");
+            return;
 
-    }else if (!await IsRegisteredUsername(req.query.Username)) {
-        console.log("Authentication failed Username not found!!");
-        res.status(401).send("Authentication failed Username not found!!");
-        return;
+        } else if (!await IsRegisteredUsername(req.query.Username)) {
+            console.log("Authentication failed Username not found!!");
+            res.status(401).send("Authentication failed Username not found!!");
+            return;
 
-    } else if (!await IsAuthenticated(req.query.Username, req.query.Password)) {
-        console.log("Authentication failed");
-        res.status(401).send("Authentication failed wrong Username/Password !!");
-        return;
+        } else if (!await IsAuthenticated(req.query.Username, req.query.Password)) {
+            console.log("Authentication failed");
+            res.status(401).send("Authentication failed wrong Username/Password !!");
+            return;
+        }
+        console.log("Authentication successful!")
     }
-    console.log("Authentication successful!")
     next();
 }
 
-module.exports = {AuthenticationMiddleWare}
+module.exports = {AuthMiddleWare,IsRegisteredUsername}

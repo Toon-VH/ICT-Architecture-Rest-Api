@@ -1,8 +1,9 @@
 const sql = require("mssql");
-const dbConfig = require('../Database/dbConnection');
+const dbConfig = require('../Database/DataBaseConnection');
 const {v4: uuidv4} = require('uuid');
 const checksum = require('checksum');
 const UserService = require('../Services/UserService')
+const {UploadFileToBucket} = require("../Database/BucketStore");
 
 
 const getAllFiles = (req, res) => {
@@ -35,22 +36,26 @@ const downloadFile = (req, res) => {
 
 const uploadFile = async (req, res) => {
 
-
-    const file = req.files[''].data;
-    const cs = checksum(file.toString());
+    if (req.files === undefined || req.files === null){
+        console.log("Uploading failed no file given!!");
+        res.status(404).send("Uploading failed no file given!!");
+        return;
+    }
+    const file = req.files[''];
+    const cs = checksum(file.data.toString());
     console.log(`Making Checksum: ${cs}`);
-    console.log(`Uploading file..`);
-
+    console.log(`Saving file info/Uploading file..`);
     sql.connect(dbConfig.dbConnection).then(() => {
         const uuid = uuidv4();
         console.log({uuid})
+        UploadFileToBucket(file,file.name);
         return sql.query(`
-                INSERT INTO Files (UUID, Checksum)
-                VALUES ('${uuid}', '${cs}');
+                INSERT INTO Files (UUID, Checksum,Name)
+                VALUES ('${uuid}', '${cs}','${file.name}');
                 `);
     }).then(() => {
-        console.log("file uploaded!")
-        res.send().message("file uploaded!");
+        console.log("file info saved in database!")
+        res.send("file info saved in database!");
     }).catch(err => {
         res.status(500).send("Something Went Wrong !!!");
         console.log(err)

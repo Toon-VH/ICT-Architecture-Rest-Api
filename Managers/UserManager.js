@@ -1,7 +1,6 @@
 const sql = require("mssql");
-const dbConfig = require('../Database/dbConnection');
-const hashService = require("../Services/HashService");
-const UserService = require("../Services/UserService");
+const dbConfig = require('../Database/DataBaseConnection');
+const UserService = require('../Services/UserService')
 
 const getAllUsers = (req, res) => {
     console.log("Getting all users..")
@@ -50,4 +49,4 @@ const deleteUser = (req, res) => {
     })
 };
 
-module.exports = {getAllUsers,addUser,deleteUser};
+module.exports = {getAllUsers,addUser, deleteUser};
