@@ -35,8 +35,7 @@ const downloadFile = (req, res) => {
 };
 
 const uploadFile = async (req, res) => {
-
-    if (req.files === undefined || req.files === null){
+    if (req.files === undefined || req.files === null) {
         console.log("Uploading failed no file given!!");
         res.status(404).send("Uploading failed no file given!!");
         return;
@@ -48,7 +47,7 @@ const uploadFile = async (req, res) => {
     sql.connect(dbConfig.dbConnection).then(() => {
         const uuid = uuidv4();
         console.log({uuid})
-        UploadFileToBucket(file,file.name);
+        UploadFileToBucket(file, file.name);
         return sql.query(`
                 INSERT INTO Files (UUID, Checksum,Name)
                 VALUES ('${uuid}', '${cs}','${file.name}');
@@ -56,6 +55,14 @@ const uploadFile = async (req, res) => {
     }).then(() => {
         console.log("file info saved in database!")
         res.send("file info saved in database!");
+
+    }).then(() => {
+        sql.connect(dbConfig.dbConnection).then(() => {
+            return sql.query(`
+                INSERT INTO Log (Action, UserId, Time, FileId)
+                VALUES ('Upload', ${UserService.GetUserId(req.params.UserName)}, null, null);
+                `);
+        })
     }).catch(err => {
         res.status(500).send("Something Went Wrong !!!");
         console.log(err)
@@ -75,4 +82,4 @@ const deleteFile = (req, res) => {
     })
 };
 
-module.exports = {getAllFiles,downloadFile,uploadFile,deleteFile};
+module.exports = {getAllFiles, downloadFile, uploadFile, deleteFile};

@@ -23,6 +23,18 @@ function IsAuthenticated(username, password) {
     })
 }
 
+const GetUserId = (username) => {
+    return sql.connect(dbConfig.dbConnection).then(() => {
+        return sql.query(`SELECT Id FROM Users WHERE UserName = '${username.toString()}';`);
+    }).then(result => {
+        return result
+    }).catch(err => {
+        console.log(err);
+    })
+}
+
+
+
 async function AuthMiddleWare(req, res, next){
     if (!req.url.includes("/users/add")) {
         console.log("Checking authentication..");
@@ -46,4 +58,4 @@ async function AuthMiddleWare(req, res, next){
     next();
 }
 
-module.exports = {AuthMiddleWare,IsRegisteredUsername}
+module.exports = {AuthMiddleWare,IsRegisteredUsername,GetUserId}
