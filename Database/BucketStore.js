@@ -6,7 +6,6 @@ const myConfig = new AWS.Config({
 
 s3 = new AWS.S3(myConfig);
 
-// Call S3 to list the buckets
 s3.listBuckets(function(err, data) {
     if (err) {
         console.log("Error", err);
@@ -15,17 +14,26 @@ s3.listBuckets(function(err, data) {
     }
 });
 
-const UploadFileToBucket = (file,fileName) =>{
+const uploadFile = (file, uuid) =>{
     const params = {
-        Bucket: 'tvh-bucket', // pass your bucket name
-        Key: fileName, // file will be saved as testBucket/contacts.csv
-        Body: JSON.stringify(file, null, 2)
+        Bucket: 'tvh-bucket',
+        Key: uuid,
+        Body: file.data
     };
-    s3.upload(params, function(s3Err, data) {
+    s3.upload(params, (s3Err, data) => {
         if (s3Err) throw s3Err
         console.log(`File uploaded successfully at ${data.Location}`)
     });
 };
 
-module.exports = {UploadFileToBucket}
+const downloadFile = (res, file, uuid) =>{
+    const params = {
+        Bucket: 'tvh-bucket',
+        Key: uuid
+    };
+    const fileStream = s3.getObject(params).createReadStream();
+    fileStream.pipe(res);
+};
+
+module.exports = {uploadFile, downloadFile}
 

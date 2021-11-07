@@ -1,37 +1,15 @@
-const sql = require("mssql");
-const dbConfig = require('../Database/DataBaseConnection');
-const {v4: uuidv4} = require('uuid');
 const checksum = require('checksum');
-const UserService = require('../Services/UserService')
-const {UploadFileToBucket} = require("../Database/BucketStore");
+const fileDataBaseStore = require("../Database/FileStore")
+const {v4: uuidv4} = require("uuid");
+const {uploadFileToBucket} = require("../Database/BucketStore");
 
 
 const getAllFiles = (req, res) => {
-    console.log("Getting all files..")
-    sql.connect(dbConfig.dbConnection).then(() => {
-        return sql.query("SELECT * FROM Files;");
-    }).then(result => {
-        console.log("All files retrieved successfully!")
-        res.send(result.recordset);
-    }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
-        console.log(err)
-    })
+    fileDataBaseStore.getAllFiles(res);
 };
 
 const downloadFile = (req, res) => {
-    console.log("Checking authentication..")
-    if (!UserService.IsAuthenticated(req.query.Username, req.query.Password))
-        console.log("Authentication successful!")
-    console.log(`Downloading file..`);
-    sql.connect(dbConfig.dbConnection).then(() => {
-        return sql.query("SELECT * FROM Files;");
-    }).then(result => {
-        res.send(result.recordset);
-    }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
-        console.log(err)
-    })
+    fileDataBaseStore.downloadFile(res);
 };
 
 const uploadFile = async (req, res) => {
@@ -40,46 +18,17 @@ const uploadFile = async (req, res) => {
         res.status(404).send("Uploading failed no file given!!");
         return;
     }
+    const uuid = uuidv4();
+    console.log({uuid});
     const file = req.files[''];
     const cs = checksum(file.data.toString());
     console.log(`Making Checksum: ${cs}`);
-    console.log(`Saving file info/Uploading file..`);
-    sql.connect(dbConfig.dbConnection).then(() => {
-        const uuid = uuidv4();
-        console.log({uuid})
-        UploadFileToBucket(file, file.name);
-        return sql.query(`
-                INSERT INTO Files (UUID, Checksum,Name)
-                VALUES ('${uuid}', '${cs}','${file.name}');
-                `);
-    }).then(() => {
-        console.log("file info saved in database!")
-        res.send("file info saved in database!");
-
-    }).then(() => {
-        sql.connect(dbConfig.dbConnection).then(() => {
-            return sql.query(`
-                INSERT INTO Log (Action, UserId, Time, FileId)
-                VALUES ('Upload', ${UserService.GetUserId(req.params.UserName)}, null, null);
-                `);
-        })
-    }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
-        console.log(err)
-    })
+    fileDataBaseStore.uploadFile(res,file,cs);
+    uploadFileToBucket(file, uuid);
 };
 
 const deleteFile = (req, res) => {
-    console.log("Deleting file..")
-    sql.connect(dbConfig.dbConnection).then(() => {
-        return sql.query(`DELETE FROM Files WHERE Id = ${req.params.id}`);
-    }).then(() => {
-        console.log("File deleted")
-        res.send("File deleted!");
-    }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
-        console.log(err)
-    })
+    fileDataBaseStore.deletingFile(res,req.params.id);
 };
 
 module.exports = {getAllFiles, downloadFile, uploadFile, deleteFile};
