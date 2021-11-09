@@ -15,7 +15,7 @@ const addUser = async (req, res) => {
         return
     }
     if (await userStore.addUser(req.query.Username, hashService.CreateHash(req.query.Password))) {
-        res.send("User created!");
+        res.status(201).send("User created!");
     } else res.status(500).send("Something Went Wrong !!!");
 };
 

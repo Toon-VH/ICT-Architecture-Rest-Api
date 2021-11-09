@@ -63,12 +63,12 @@ const isAuthenticated = (username, password) => sql.connect(dbConfig.dbConnectio
     console.log(err);
 });
 
-//todo: test
+
 const getUserId = (username) => {
     return sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query(`SELECT Id FROM Users WHERE UserName = '${username.toString()}';`);
     }).then(result => {
-        return result
+        return result.recordset[0].Id
     }).catch(err => {
         console.log(err);
     })

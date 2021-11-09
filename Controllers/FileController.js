@@ -1,10 +1,10 @@
 const express = require('express');
 const router  = express.Router();
-const FileController = require('../Managers/FileManager');
+const FileManager = require('../Managers/FileManager');
 
-router.get('/', FileController.getAllFiles);
-router.get('/download', FileController.downloadFile);
-router.post('/upload', FileController.uploadFile);
-router.delete('/delete/:id', FileController.deleteFile);
+router.get('/', FileManager.getAllFiles);
+router.get('/download', FileManager.downloadFile);
+router.post('/upload', FileManager.uploadFile);
+router.delete('/delete', FileManager.deleteFile);
 
 module.exports = router;

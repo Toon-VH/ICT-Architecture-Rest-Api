@@ -6,16 +6,17 @@ const S3Client = new S3({
     credentials,
 });
 
+const AWS = require('aws-sdk');
 
-// const AWS = require('aws-sdk');
-//
-// const myConfig = new AWS.Config({
-//     region: 'us-east-1', apiVersion: '2006-03-01'
-// });
-//
-// s3 = new AWS.S3(myConfig);
+const myConfig = new AWS.Config({
+    region: 'us-east-1', apiVersion: '2006-03-01'
+});
+
+s3 = new AWS.S3(myConfig);
+
 
 S3Client.listBuckets(function(err, data) {
+    console.log("Finding Buckets..")
     if (err) {
         console.log("Error", err);
     } else {
@@ -23,25 +24,30 @@ S3Client.listBuckets(function(err, data) {
     }
 });
 
-const uploadFile = (file, uuid) =>{
+const uploadFile = (file, uuid) => {
     const params = {
         Bucket: 'tvh-bucket',
         Key: uuid,
         Body: file.data
     };
-    S3Client.upload(params, (s3Err, data) => {
-        if (s3Err) throw s3Err
-        console.log(`File uploaded successfully at ${data.Location}`)
-    });
+    return S3Client.upload(params);
 };
 
-const downloadFile = (file, uuid) =>{
+const downloadFile = (uuid) =>{
     const params = {
         Bucket: 'tvh-bucket',
         Key: uuid
     };
-    return S3Client.getObject(params).createReadStream();
+    return S3Client.getObject(params);
 };
 
-module.exports = {uploadFile, downloadFile}
+const deleteFile = (uuid) =>{
+    const params = {
+        Bucket: 'tvh-bucket',
+        Key: uuid
+    };
+    return S3Client.deleteObject(params);
+}
+
+module.exports = {uploadFile, downloadFile, deleteFile}
 

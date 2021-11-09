@@ -26,9 +26,9 @@ const uploadFile = (file, cs, uuid) => {
     })
 }
 
-const deletingFile = (id) => {
+const deleteFile = (uuid) => {
     return sql.connect(dbConfig.dbConnection).then(() => {
-        return sql.query(`DELETE FROM Files WHERE Id = ${id}`);
+        sql.query(`DELETE FROM Files WHERE UUID = '${uuid}'`);
     }).then(() => {
         return true
     }).catch(err => {
@@ -37,7 +37,7 @@ const deletingFile = (id) => {
     })
 }
 
-module.exports = {getAllFiles, uploadFile, deletingFile}
+module.exports = {getAllFiles, uploadFile,deleteFile}
 
 
 
