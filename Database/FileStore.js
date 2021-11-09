@@ -1,61 +1,43 @@
 const sql = require("mssql");
 const dbConfig = require("../Database/DataBaseConnection");
 
-const getAllFiles = (res) => {
-    console.log("Getting all files..")
-    sql.connect(dbConfig.dbConnection).then(() => {
+const getAllFiles = () => {
+    return  sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query("SELECT * FROM Files;");
     }).then(result => {
-        console.log("All files retrieved successfully!")
-        res.send(result.recordset);
+        return result.recordset;
     }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
         console.log(err)
+        return null;
     })
 }
 
-const uploadFile = (res, file, cs, uuid) => {
-    console.log(`Saving file info/Uploading file..`);
-    sql.connect(dbConfig.dbConnection).then(() => {
+const uploadFile = (file, cs, uuid) => {
+   return  sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query(`
                 INSERT INTO Files (UUID, Checksum,Name)
                 VALUES ('${uuid}', '${cs}','${file.name}');
                 `);
     }).then(() => {
-        console.log("file info saved in database!")
-        res.send("file info saved in database!");
+       return true
     }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
         console.log(err)
+        return false
     })
 }
 
-const downloadFile = (res) => {
-    console.log(`Downloading file..`);
-    sql.connect(dbConfig.dbConnection).then(() => {
-        return sql.query("SELECT * FROM Files;");
-    }).then(result => {
-        res.send(result.recordset);
-    }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
-        console.log(err)
-    })
-}
-
-const deletingFile = (res, id) => {
-    console.log("Deleting file..");
-    sql.connect(dbConfig.dbConnection).then(() => {
+const deletingFile = (id) => {
+    return sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query(`DELETE FROM Files WHERE Id = ${id}`);
     }).then(() => {
-        console.log("File deleted")
-        res.send("File deleted!");
+        return true
     }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
         console.log(err)
+        return false
     })
 }
 
-module.exports = {getAllFiles, uploadFile, downloadFile, deletingFile}
+module.exports = {getAllFiles, uploadFile, deletingFile}
 
 
 

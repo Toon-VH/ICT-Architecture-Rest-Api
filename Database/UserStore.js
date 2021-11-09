@@ -2,45 +2,45 @@ const sql = require("mssql");
 const dbConfig = require("../Database/DataBaseConnection");
 const hashService = require("../Services/HashService");
 
-const getAllUsers = (res) => {
+const getAllUsers =  () => {
     console.log("Getting all users..")
-    sql.connect(dbConfig.dbConnection).then(() => {
+    return sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query("SELECT * FROM Users;");
     }).then(result => {
         console.log("All users retrieved successfully!")
-        res.send(result.recordset);
+        return result.recordset
     }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
         console.log(err)
+        return null
     })
 }
 
-const addUser = (res, userName, hash) => {
+const addUser = (userName, hash) => {
     console.log("Creating User..")
-    sql.connect(dbConfig.dbConnection).then(() => {
+    return sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query(`
                 INSERT INTO Users (UserName, HashPassword)
                 VALUES ('${userName}', '${hash}');
                         `);
     }).then(() => {
         console.log("User created!")
-        res.send("User created!");
+        return true
     }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
         console.log(err)
+        return false
     })
 }
 
 const deleteUser = (res, id) => {
     console.log("Deleting user..")
-    sql.connect(dbConfig.dbConnection).then(() => {
+    return sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query(`DELETE FROM Users WHERE Id = ${id}`);
     }).then(() => {
         console.log("User deleted")
-        res.send("User deleted!");
+        return true
     }).catch(err => {
-        res.status(500).send("Something Went Wrong !!!");
         console.log(err)
+        return true
     })
 }
 

@@ -6,13 +6,13 @@ const myConfig = new AWS.Config({
 
 s3 = new AWS.S3(myConfig);
 
-s3.listBuckets(function(err, data) {
-    if (err) {
-        console.log("Error", err);
-    } else {
-        console.log("Success", data.Buckets);
-    }
-});
+// s3.listBuckets(function(err, data) {
+//     if (err) {
+//         console.log("Error", err);
+//     } else {
+//         console.log("Success", data.Buckets);
+//     }
+// });
 
 const uploadFile = (file, uuid) =>{
     const params = {
@@ -26,13 +26,12 @@ const uploadFile = (file, uuid) =>{
     });
 };
 
-const downloadFile = (res, file, uuid) =>{
+const downloadFile = (file, uuid) =>{
     const params = {
         Bucket: 'tvh-bucket',
         Key: uuid
     };
-    const fileStream = s3.getObject(params).createReadStream();
-    fileStream.pipe(res);
+    return s3.getObject(params).createReadStream();
 };
 
 module.exports = {uploadFile, downloadFile}
