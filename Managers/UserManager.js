@@ -4,7 +4,7 @@ const hashService = require("../Services/HashService");
 const getAllUsers = async (req, res) => {
     const users = await userStore.getAllUsers(res)
     if (users != null) {
-        res.send(users.recordset);
+        res.send(users);
     } else res.status(500).send("Something Went Wrong !!!");
 };
 

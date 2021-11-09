@@ -1,8 +1,7 @@
 const checksum = require('checksum');
 const fileDataBaseStore = require("../Database/FileStore")
 const {v4: uuidv4} = require("uuid");
-const {bucketStore} = require("../Database/BucketStore");
-
+const bucketStore = require("../Database/BucketStore");
 
 const getAllFiles = async (req, res) => {
     console.log("Getting all files..")
@@ -25,7 +24,7 @@ const uploadFile = async (req, res) => {
     const cs = checksum(file.data.toString());
     console.log(`Making Checksum: ${cs}`);
     console.log(`Saving file info/Uploading file..`);
-    if (await fileDataBaseStore.uploadFile(file, cs)) {
+    if (await fileDataBaseStore.uploadFile(file, cs, uuid)) {
         console.log("file info saved in database!")
         res.send("file info saved in database!");
         bucketStore.uploadFile(file, uuid);
