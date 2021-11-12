@@ -1,7 +1,5 @@
 const UserDataBaseStore = require('../Database/UserStore');
 
-
-//todo fix Security issue
 async function AuthMiddleWare(req, res, next){
     if (!req.url.includes("/users/add")) {
         console.log("Checking authentication..");

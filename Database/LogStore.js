@@ -2,7 +2,7 @@ const sql = require("mssql");
 const dbConfig = require("../Database/DataBaseConnection");
 
 const getAllLogs = () => {
-    return  sql.connect(dbConfig.dbConnection).then(() => {
+    return sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query("SELECT * FROM Logs;");
     }).then(result => {
         return result.recordset;
@@ -12,12 +12,11 @@ const getAllLogs = () => {
     })
 }
 
-const createLog = (action, fileUuid, userId) => {
+const createLog = (action, userId, fileId) => {
     return sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query(`
                     INSERT INTO Logs (Action, UserId, Time, FileId)
-                    VALUES ('${action}', ${userId},GETDATE(),(SELECT Id FROM Files WHERE UUID = '${fileUuid}'))`);
-
+                    VALUES ('${action}', ${userId}, GETDATE(), ${fileId})`);
     }).then(() => {
         return true;
     }).catch(err => {
