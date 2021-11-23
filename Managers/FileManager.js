@@ -14,7 +14,16 @@ const getAllFiles = async (req, res) => {
     } else res.status(500).send("Something Went Wrong !!!");
 };
 
-const uploadFile = async (req, res) => {
+const uploadFile = async (req,res)=>{
+    const uuid = uuidv4();
+    console.log({uuid});
+    res.send(bucketStore.getPresignedURL(uuid));
+
+    
+}
+
+
+/*const uploadFile = async (req, res) => {
     if (req.files === undefined || req.files === null) {
         console.log("Uploading failed no file given!!");
         res.status(404).send("Uploading failed no file given!!");
@@ -38,7 +47,7 @@ const uploadFile = async (req, res) => {
         console.log(err);
     })
 };
-
+*/
 const downloadFile = async (req, res) => {
     if (req.params.uuid === undefined || req.params.uuid === null) {
         console.log("Downloading failed no UUID given!!");

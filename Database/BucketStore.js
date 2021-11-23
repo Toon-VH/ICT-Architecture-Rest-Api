@@ -49,5 +49,16 @@ const deleteFile = (uuid) =>{
     return S3Client.deleteObject(params);
 }
 
-module.exports = {uploadFile, downloadFile, deleteFile}
+
+const getPresignedURL= (uuid)=>{
+    const params = {
+        Bucket: 'tvh-bucket',
+        Key: uuid
+    };
+
+    return s3.getPresignedURL(params);
+}
+
+
+module.exports = {uploadFile, downloadFile, deleteFile,getPresignedURL}
 
