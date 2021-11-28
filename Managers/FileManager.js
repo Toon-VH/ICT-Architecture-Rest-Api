@@ -14,16 +14,14 @@ const getAllFiles = async (req, res) => {
     } else res.status(500).send("Something Went Wrong !!!");
 };
 
-const uploadFile = async (req,res)=>{
+const getPresignedURL =  async (req, res) => {
+    console.log("test")
     const uuid = uuidv4();
-    console.log({uuid});
+    console.log("UUID: ",{uuid});
     res.send(bucketStore.getPresignedURL(uuid));
-
-    
 }
 
-
-/*const uploadFile = async (req, res) => {
+const uploadFile = async (req, res) => {
     if (req.files === undefined || req.files === null) {
         console.log("Uploading failed no file given!!");
         res.status(404).send("Uploading failed no file given!!");
@@ -47,7 +45,8 @@ const uploadFile = async (req,res)=>{
         console.log(err);
     })
 };
-*/
+
+
 const downloadFile = async (req, res) => {
     if (req.params.uuid === undefined || req.params.uuid === null) {
         console.log("Downloading failed no UUID given!!");
@@ -90,7 +89,7 @@ const deleteFile = async (req, res) => {
     const fileId = await fileStore.getFileId(req.query.uuid)
     if (await fileStore.deleteFile(req.query.uuid)) {
         bucketStore.deleteFile(req.query.uuid).promise().then(async () => {
-            logStore.createLog('Delete', req.userId, fileId );
+            logStore.createLog('Delete', req.userId, fileId);
             console.log("File deleted")
             res.send("File deleted!");
         }).catch((err) => {
@@ -99,4 +98,4 @@ const deleteFile = async (req, res) => {
         });
     }
 }
-module.exports = {getAllFiles, downloadFile, uploadFile, deleteFile};
+module.exports = {getAllFiles, downloadFile, uploadFile, getPresignedURL, deleteFile};

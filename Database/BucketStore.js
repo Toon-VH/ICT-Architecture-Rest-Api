@@ -1,6 +1,7 @@
 const {S3, SharedIniFileCredentials} = require('aws-sdk');
 
 const credentials = new SharedIniFileCredentials({profile: 'default'})
+
 const S3Client = new S3({
     region: 'us-east-1',
     credentials,
@@ -51,12 +52,13 @@ const deleteFile = (uuid) =>{
 
 
 const getPresignedURL= (uuid)=>{
+    console.log("test")
     const params = {
         Bucket: 'tvh-bucket',
         Key: uuid
     };
 
-    return s3.getPresignedURL(params);
+    return S3Client.getSignedUrl('putObject', params)
 }
 
 
