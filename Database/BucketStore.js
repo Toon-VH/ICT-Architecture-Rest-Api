@@ -51,16 +51,26 @@ const deleteFile = (uuid) =>{
 }
 
 
-const getPresignedURL= (uuid)=>{
-    console.log("test")
+const GeneratePutURL= (uuid)=>{
     const params = {
         Bucket: 'tvh-bucket',
-        Key: uuid
+        Key: uuid,
+        Expires: 900
     };
 
     return S3Client.getSignedUrl('putObject', params)
 }
 
+const GenerateGetURL= (uuid)=>{
+    const params = {
+        Bucket: 'tvh-bucket',
+        Key: uuid,
+        Expires: 900
+    };
 
-module.exports = {uploadFile, downloadFile, deleteFile,getPresignedURL}
+    return S3Client.getSignedUrl('getObject', params)
+}
+
+
+module.exports = {uploadFile, downloadFile, deleteFile, GeneratePutURL, GenerateGetURL}
 

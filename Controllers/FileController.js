@@ -4,7 +4,8 @@ const FileManager = require('../Managers/FileManager');
 
 router.get('/', FileManager.getAllFiles);
 router.get('/download', FileManager.downloadFile);
-router.get('/presignedurl', FileManager.getPresignedURL);
+router.post('/signalUploadComplete', FileManager.signalUploadComplete);
+router.post('/signalDownloadComplete', FileManager.signalUploadComplete);
 router.post('/upload', FileManager.uploadFile);
 router.delete('/delete', FileManager.deleteFile);
 

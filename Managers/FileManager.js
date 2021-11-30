@@ -5,6 +5,8 @@ const bucketStore = require("../Database/BucketStore");
 const logStore = require("../Database/LogStore");
 const {getFileId} = require("../Database/FileStore");
 
+
+//region OldMethodes
 const getAllFiles = async (req, res) => {
     console.log("Getting all files..")
     const files = await fileStore.getAllFiles();
@@ -13,13 +15,6 @@ const getAllFiles = async (req, res) => {
         res.send(files);
     } else res.status(500).send("Something Went Wrong !!!");
 };
-
-const getPresignedURL =  async (req, res) => {
-    console.log("test")
-    const uuid = uuidv4();
-    console.log("UUID: ",{uuid});
-    res.send(bucketStore.getPresignedURL(uuid));
-}
 
 const uploadFile = async (req, res) => {
     if (req.files === undefined || req.files === null) {
@@ -98,4 +93,35 @@ const deleteFile = async (req, res) => {
         });
     }
 }
-module.exports = {getAllFiles, downloadFile, uploadFile, getPresignedURL, deleteFile};
+//endregion
+
+
+//region NewMethodes
+const signalUploadComplete = async (req, res) => {
+    if (req.params.uuid === undefined || req.params.uuid === null) {
+        console.log("Signal failed no UUID given!!");
+        res.status(404).send("Signal failed no UUID given!!");
+        return;
+    }
+    const uuid = req.query.UUID
+    console.log("Downloading file from bucket..")
+    let file = await bucketStore.downloadFile(uuid);
+    const cs = checksum(file.toString());
+    console.log(`Making Checksum: ${cs}`);
+    console.log(`Saving file info in db..`);
+    if (await fileStore.uploadFile(file, cs, uuid)) {
+        await logStore.createLog('Upload', req.userId, await getFileId(uuid));
+        console.log("File info saved and in db!")
+        res.status(201).send("Info saved and in DB successfully!");
+    }
+
+}
+
+const signalDownloadComplete = async (req, res) => {
+
+
+}
+
+//endregion
+
+module.exports = {getAllFiles, downloadFile, uploadFile, deleteFile, signalUploadComplete, signalDownloadComplete};
