@@ -65,12 +65,11 @@ const GenerateGetURL= (uuid)=>{
     const params = {
         Bucket: 'tvh-bucket',
         Key: uuid,
-        Expires: 900
+        Expires: 900,
+        ResponseContentType: 'image/png'
     };
-
     return S3Client.getSignedUrl('getObject', params)
 }
-
 
 module.exports = {uploadFile, downloadFile, deleteFile, GeneratePutURL, GenerateGetURL}
 
