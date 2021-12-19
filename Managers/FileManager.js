@@ -5,7 +5,14 @@ const logStore = require("../Database/LogStore");
 const {getFileId} = require("../Database/FileStore");
 //const async = require("async"); // To call AWS operations asynchronously.
 
-
+const getAllFiles = async (req, res) => {
+    console.log("Getting all files..")
+    const files = await fileStore.getAllFiles();
+    if (files !== null) {
+        console.log("All files retrieved successfully!")
+        res.send(files);
+    } else res.status(500).send("Something Went Wrong !!!");
+};
 
 const signalUploadComplete = async (req, res) => {
     if (req.query.UUID === undefined || req.query.UUID === null) {
@@ -40,4 +47,4 @@ const signalDownloadComplete = async (req, res) => {
 }
 
 
-module.exports = {signalUploadComplete, signalDownloadComplete};
+module.exports = {getAllFiles, signalUploadComplete, signalDownloadComplete};
