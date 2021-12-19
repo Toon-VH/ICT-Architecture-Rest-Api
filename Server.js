@@ -11,6 +11,8 @@ const {LogMiddleWare} = require("./Services/LogService");
 // add timestamps in front of log messages
 require('console-stamp')(console, 'HH:MM:ss.l');
 
+console.log(process.version)
+
 const app = express();
 app.use(cors({
     origin: 'http://localhost:4200',
@@ -27,6 +29,6 @@ app.use('/users', userController);
 app.use('/logs', logController)
 
 
-const server = app.listen(80, () => {
+const server = app.listen(8080, () => {
     console.log("Server running on address:https://54.167.108.39:%s", server.address().port)
 });

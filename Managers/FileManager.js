@@ -3,6 +3,9 @@ const fileStore = require("../Database/FileStore")
 const bucketStore = require("../Database/BucketStore");
 const logStore = require("../Database/LogStore");
 const {getFileId} = require("../Database/FileStore");
+//const async = require("async"); // To call AWS operations asynchronously.
+
+
 
 const signalUploadComplete = async (req, res) => {
     if (req.query.UUID === undefined || req.query.UUID === null) {
