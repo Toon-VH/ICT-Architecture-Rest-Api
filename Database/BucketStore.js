@@ -1,6 +1,6 @@
 const {S3, SharedIniFileCredentials} = require('aws-sdk');
 
-const credentials = new SharedIniFileCredentials({profile: 'default'})
+const credentials = new SharedIniFileCredentials({profile: 'ec2-user'})
 
 const S3Client = new S3({
     region: 'us-east-1',
