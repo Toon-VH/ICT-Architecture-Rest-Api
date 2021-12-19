@@ -27,6 +27,6 @@ app.use('/users', userController);
 app.use('/logs', logController)
 
 
-const server = app.listen(8081, () => {
-    console.log("Server running on address:https://127.0.0.1:%s", server.address().port)
+const server = app.listen(80, () => {
+    console.log("Server running on address:https://54.167.108.39:%s", server.address().port)
 });
