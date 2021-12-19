@@ -2,10 +2,8 @@ const express = require('express');
 const router  = express.Router();
 const FileManager = require('../Managers/FileManager');
 
-router.get('/', FileManager.getAllFiles);
-router.get('/download', FileManager.downloadFile);
-router.get('/presignedurl', FileManager.getPresignedURL);
-router.post('/upload', FileManager.uploadFile);
-router.delete('/delete', FileManager.deleteFile);
+
+router.post('/signalUploadComplete', FileManager.signalUploadComplete);
+router.post('/signalDownloadComplete', FileManager.signalDownloadComplete);
 
 module.exports = router;
