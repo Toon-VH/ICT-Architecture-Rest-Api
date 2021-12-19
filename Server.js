@@ -4,6 +4,7 @@ const fileUpload = require('express-fileupload');
 const fileController = require('./Controllers/FileController');
 const userController = require('./Controllers/UserController');
 const logController = require('./Controllers/LogController');
+const preSignedURLController = require('./Controllers/PreSignedURLController');
 const {AuthMiddleWare} = require("./Services/UserService");
 const {LogMiddleWare} = require("./Services/LogService");
 
@@ -19,11 +20,13 @@ app.use(express.json());
 app.use(fileUpload(undefined));
 app.use(LogMiddleWare);
 app.use(AuthMiddleWare);
+
+app.use('/PreURL',preSignedURLController)
 app.use('/files', fileController);
 app.use('/users', userController);
 app.use('/logs', logController)
 
 
-const server = app.listen(8081, () => {
-    console.log("Server running on address:https://127.0.0.1:%s", server.address().port)
+const server = app.listen(80, () => {
+    console.log("Server running on address:https://54.167.108.39:%s", server.address().port)
 });

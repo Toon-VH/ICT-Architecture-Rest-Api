@@ -12,11 +12,11 @@ const getAllFiles = () => {
     })
 }
 
-const uploadFile = (file, cs, uuid) => {
+const uploadFileInfo = (fileName, cs, uuid) => {
     return sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query(`
                 INSERT INTO Files (UUID, Checksum,Name)
-                VALUES ('${uuid}', '${cs}','${file.name}');
+                VALUES ('${uuid}', '${cs}','${fileName}');
                 `);
     }).then(() => {
         return true
@@ -26,7 +26,7 @@ const uploadFile = (file, cs, uuid) => {
     })
 }
 
-const deleteFile = (uuid) => {
+const deleteFileInfo = (uuid) => {
     return sql.connect(dbConfig.dbConnection).then(() => {
         sql.query(`DELETE FROM Files WHERE UUID = '${uuid}'`);
     }).then(() => {
@@ -60,7 +60,7 @@ const getChecksum = async (uuid) => {
 }
 
 
-module.exports = {getAllFiles, uploadFile, deleteFile, getFileId ,getChecksum}
+module.exports = {getAllFiles, uploadFileInfo, deleteFileInfo, getFileId ,getChecksum}
 
 
 
