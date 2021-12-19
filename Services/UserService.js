@@ -19,8 +19,9 @@ async function AuthMiddleWare(req, res, next){
             return;
         }
         console.log("Authentication successful!")
+        req.userId = await UserDataBaseStore.getUserId(req.query.Username);
     }
-    req.userId = await UserDataBaseStore.getUserId(req.query.Username);
+    
     next();
 }
 

@@ -29,6 +29,8 @@ app.use('/users', userController);
 app.use('/logs', logController)
 
 
-const server = app.listen(8080, () => {
-    console.log("Server running on address:https://54.167.108.39:%s", server.address().port)
+var server = app.listen(8080, function () {
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log('running at http://' + host + ':' + port)
 });

@@ -12,11 +12,11 @@ const getAllFiles = () => {
     })
 }
 
-const uploadFileInfo = (fileName, cs, uuid) => {
+const uploadFileInfo = (cs, uuid) => {
     return sql.connect(dbConfig.dbConnection).then(() => {
         return sql.query(`
-                INSERT INTO Files (UUID, Checksum,Name)
-                VALUES ('${uuid}', '${cs}','${fileName}');
+                INSERT INTO Files (UUID, Checksum)
+                VALUES ('${uuid}', '${cs}');
                 `);
     }).then(() => {
         return true

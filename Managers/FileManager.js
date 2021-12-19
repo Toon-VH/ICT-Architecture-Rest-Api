@@ -3,7 +3,6 @@ const fileStore = require("../Database/FileStore")
 const bucketStore = require("../Database/BucketStore");
 const logStore = require("../Database/LogStore");
 const {getFileId} = require("../Database/FileStore");
-//const async = require("async"); // To call AWS operations asynchronously.
 
 const getAllFiles = async (req, res) => {
     console.log("Getting all files..")
@@ -26,7 +25,7 @@ const signalUploadComplete = async (req, res) => {
     const cs = checksum(file.toString());
     console.log(`Making Checksum: ${cs}`);
     console.log(`Saving file info in db..`);
-    if (await fileStore.uploadFileInfo(file.name, cs, uuid)) {
+    if (await fileStore.uploadFileInfo(cs, uuid)) {
         await logStore.createLog('Upload', req.userId, await getFileId(uuid));
         console.log("File info saved and in db!")
         res.status(201).send("Info saved and in DB successfully!");
